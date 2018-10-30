@@ -1,24 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <errno.h>
+#include <string.h>
 #include "storage.h"
 
 int main(int argc, const char *argv[]) {
-    Storage *s = storage_init();
-    int *error = malloc(sizeof(int*));
+    FILE *program_file;
+    Storage *storage;
+    
+    if (argc != 2) {
+        printf("One (and only one) input argument required: ");
+        printf("the path to the binary-encoded program file that is to be executed.\n");
+        exit(1);
+    }
 
-    unsigned short x = storage_loadmem(s, 0, error);
-    assert(*error == MEMORY_OP_SUCCESS);
-    assert(x == 0);
+    program_file = fopen(argv[1], "rb");
+    if (program_file == NULL) {
+        printf("Could not open program file: %s\n", strerror(errno));
+        exit(errno);
+    }
+    // TODO check that memory allocation succeeds.
+    storage = storage_init();
+    if (storage_load_program(storage, program_file) != MemoryOpSuccess) {
+        printf("Failed to load program into memory.\n");
+        // TODO use sensible error codes (here and above).
+        exit(1);
+    }
+    fclose(program_file);
 
-    storage_setmem(s, 0, 3);
-    assert(*error == MEMORY_OP_SUCCESS);
+    for (unsigned short i = 0u; i < 5u; i++) {
+        printf("Value at address %hu: %hu\n", i, storage->memory[i]);
+    }
+    
+    storage_free(storage);
 
-    x = storage_loadmem(s, 0, error);
-    printf("Here's the value of x: %hu\n", x);
-    assert(*error == MEMORY_OP_SUCCESS);
-    assert(x == 3);
-
-    free(error);
-    storage_free(s);
+    return 0;
 }

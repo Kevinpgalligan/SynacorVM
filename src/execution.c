@@ -1,3 +1,5 @@
+#include "storage.h"
+#include "execution.h"
 #include <bool.h>
 #include <stdio.h>
 
@@ -21,19 +23,19 @@ unsigned short *read_args(Execution *e, Storage *s, int n_args) {
     }
 }
 
-Operation *lookup(unsigned short op_code) {
+Instruction *lookup(unsigned short instruction_code) {
     // todo
 }
 
 int do_step(Execution *e, Storage *s) {
-    int *error;
-    unsigned short op_code = storage_loadmem(s, e->execution_address, error);
+    int *error = malloc(sizeof(*error));
+    unsigned short instruction_code = storage_loadmem(s, e->execution_address, error);
     ++e.execution_address;
     if (*error == MEMORY_OP_INVALID_ADDRESS) {
         return false;
     }
-    Operation *op = lookup(op_code);
-    if (op == NULL) {
+    Instruction *instruction = lookup(instruction_code);
+    if (instruction == NULL) {
         return false;
     }
     unsigned short *op_args = read_args(e, s, op->n_args);
