@@ -1,1 +1,13 @@
 synacor
+*.in
+aclocal.m4
+autom4te.cache/
+compile
+configure
+depcomp
+install-sh
+missing
+stamp-h1
+src/.deps/
+config.*
+Makefile

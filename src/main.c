@@ -19,11 +19,13 @@ int main(int argc, const char *argv[]) {
         printf("Could not open program file: %s\n", strerror(errno));
         exit(errno);
     }
-    // TODO check that memory allocation succeeds.
     storage = storage_init();
+    if (storage == NULL) {
+        printf("Could not allocate space for VM memory.");
+        exit(1);
+    }
     if (storage_load_program(storage, program_file) != MemoryOpSuccess) {
         printf("Failed to load program into memory.\n");
-        // TODO use sensible error codes (here and above).
         exit(1);
     }
     fclose(program_file);
