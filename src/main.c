@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <string.h>
 #include "storage.h"
+#include "execution.h"
 
 int main(int argc, const char *argv[]) {
     FILE *program_file;
@@ -30,8 +31,12 @@ int main(int argc, const char *argv[]) {
     }
     fclose(program_file);
 
-    for (unsigned short i = 0u; i < 5u; i++) {
-        printf("Value at address %hu: %hu\n", i, storage->memory[i]);
+    ExecutionStatusCode status = execute(storage);
+    printf("\n-------\n");
+    if (status == ExecutionSuccess) {
+        printf("Execution was successful!\n");
+    } else {
+        printf("Execution was unsuccessful!\n");
     }
     
     storage_free(storage);

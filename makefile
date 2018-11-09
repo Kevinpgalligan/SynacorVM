@@ -5,7 +5,9 @@ NAME = synacor
 TESTS_NAME = synacor-tests
 
 DEPENDENCIES = \
-	src/storage.c
+	src/storage.c \
+	src/execution.c \
+	src/instructions.c
 
 TEST_DEPENDENCIES = \
 	tests/testrunner.c \

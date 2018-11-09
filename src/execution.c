@@ -1,55 +1,60 @@
 #include "storage.h"
 #include "execution.h"
-#include <bool.h>
+#include "instructions.h"
+#include <stdbool.h>
 #include <stdio.h>
 
-/**
- * TODO:
- *  - check for NULL when malloc-ing.
- *  - error reporting.
- *  - finish execute().
- *  - implement loader.
- */
+// Initializes a pointer, allocates it memory
+// and loads num_cells from storage into
+// it. Then advances the execution pointer past
+// the cells that were loaded. If any of these
+// steps fail, it sets the Execution in an error
+// state and returns from the function.
+#define LOAD_OR_ERROR(pointer_name, num_cells)\
+    pointer_name = malloc(num_cells * sizeof *pointer_name);\
+    if (pointer_name == NULL) {\
+        set_error(e, ExecutionAllocError);\
+        return;\
+    }\
+    if (storage_get_mem(s, e->address, num_cells, pointer_name) != MemoryOpSuccess) {\
+        set_error(e, ExecutionMemoryAccessError);\
+        return;\
+    }\
+    e->address += num_cells;
 
-typedef struct Execution {
-    unsigned short execution_address = 0;
-    bool is_running = true;
-} Execution;
-
-unsigned short *read_args(Execution *e, Storage *s, int n_args) {
-    unsigned short *args = malloc(n_args * sizeof(*args));
-    while (n_args-- > 0) {
-        // todo
-    }
+void set_error(Execution *e, ExecutionStatusCode status) {
+    e->status = status;
+    e->is_running = false;
 }
 
-Instruction *lookup(unsigned short instruction_code) {
-    // todo
-}
+void do_step(Execution *e, Storage *s) {
+    unsigned short *instruction_code = NULL;
+    LOAD_OR_ERROR(instruction_code, 1)
 
-int do_step(Execution *e, Storage *s) {
-    int *error = malloc(sizeof(*error));
-    unsigned short instruction_code = storage_loadmem(s, e->execution_address, error);
-    ++e.execution_address;
-    if (*error == MEMORY_OP_INVALID_ADDRESS) {
-        return false;
-    }
-    Instruction *instruction = lookup(instruction_code);
+    Instruction *instruction = lookup_instruction(*instruction_code);
     if (instruction == NULL) {
-        return false;
+        set_error(e, ExecutionInvalidInstructionError);
+        return;
     }
-    unsigned short *op_args = read_args(e, s, op->n_args);
-    op->fn(e, s, op_args);
-    free(op_args);
+
+    unsigned short *args = NULL;
+    if (instruction->num_args > 0) {
+        LOAD_OR_ERROR(args, instruction->num_args)
+    }
+
+    if (instruction->fn(e, s, args) != InstructionSuccess) {
+        set_error(e, ExecutionInstructionError);
+        return;
+    }
+
+    free(args);
+    free(instruction_code);
 }
 
-void execute(Storage *s) {
-    Execution *e = malloc(sizeof(Execution *));
+ExecutionStatusCode execute(Storage *s) {
+    EXECUTION_INIT(e);
     while (e.is_running) {
-        if (!do_step(e, s)) {
-            printf("ERROR!\n");
-            break;
-        }
+        do_step(&e, s);
     }
-    free(e);
+    return e.status;
 }

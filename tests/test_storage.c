@@ -18,6 +18,7 @@ START_TEST(test_memory_initialized_to_zero) {
         ck_assert(values[i] == 0);
     }
 
+    free(values);
     storage_free(s);
 }
 END_TEST
@@ -49,6 +50,8 @@ START_TEST(test_get_mem_when_out_of_range) {
     Storage *s = storage_init();
     unsigned short *values = malloc(1 * sizeof *values);
     ck_assert_int_eq(MemoryOpInvalidAddress, storage_get_mem(s, 60000, 1, values));
+
+    free(values);
     storage_free(s);
 }
 END_TEST

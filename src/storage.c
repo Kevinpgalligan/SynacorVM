@@ -38,7 +38,7 @@ MemoryOpStatusCode storage_get_mem(
     if (!valid_range(base_address, num_values)) {
         return MemoryOpInvalidAddress;
     }
-    memcpy(storage->memory + base_address, destination, num_values * sizeof storage->memory[0]);
+    memcpy(destination, storage->memory + base_address, num_values * sizeof storage->memory[0]);
     return MemoryOpSuccess;
 }
 
@@ -50,7 +50,7 @@ MemoryOpStatusCode storage_set_mem(
     if (!valid_range(base_address, num_values)) {
         return MemoryOpInvalidAddress;
     }
-    memcpy(values, storage->memory + base_address, num_values * sizeof *values);
+    memcpy(storage->memory + base_address, values, num_values * sizeof *values);
     return MemoryOpSuccess;
 }
 
