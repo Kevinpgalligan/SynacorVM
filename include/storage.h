@@ -3,19 +3,23 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 // These values are fixed according to the spec of
-// the Synacor VM.
-// 2^15 address space.
-#define MEMORY_SIZE 32768
-#define REGISTERS 8
+// the Synacor VM. The address space is 2^15, and
+// registers are referred to as if they're extra
+// memory addresses at the end of the address space..
+#define MEMORY_SIZE      32768
+#define REGISTERS        8
+#define REGISTER_OFFSET  MEMORY_SIZE
+#define MAX_NUM          MEMORY_SIZE
 
 typedef enum {
-    MemoryOpInvalidAddress,
-    MemoryOpProgramReadIOError,
-    MemoryOpProgramTooBig,
-    MemoryOpSuccess
-} MemoryOpStatusCode;
+    StorageOpInvalidAddress,
+    StorageOpProgramReadIOError,
+    StorageOpProgramTooBig,
+    StorageOpSuccess
+} StorageOpStatusCode;
 
 /**
  * Represents all storage of the VM, including memory,
@@ -33,9 +37,6 @@ typedef struct {
  */
 Storage *storage_init();
 
-/**
- * Free up memory that was allocated to a Storage struct.
- */
 void storage_free(Storage *s);
 
 /**
@@ -46,11 +47,11 @@ void storage_free(Storage *s);
  * @param num_values number of memory cells to copy.
  * @param destination location where the copied values will be
  *        stored, should be at least num_values in size.
- * @return MemoryOpInvalidAddress if the copy range is outside
+ * @return StorageOpInvalidAddress if the copy range is outside
  *         the range of valid memory addresses, otherwise
- *         MemoryOpSuccess indicating that the copy was successful.
+ *         StorageOpSuccess indicating that the copy was successful.
  */
-MemoryOpStatusCode storage_get_mem(
+StorageOpStatusCode storage_get_mem(
     Storage *s,
     unsigned short base_address,
     unsigned short num_values,
@@ -64,11 +65,11 @@ MemoryOpStatusCode storage_get_mem(
  * @param num_values number of memory cells to set.
  * @param destination location where the values of the cells will be
  *        retrieved from, should be at least num_values in size.
- * @return MemoryOpInvalidAddress if the memory range is outside
+ * @return StorageOpInvalidAddress if the memory range is outside
  *         the range of valid memory addresses, otherwise
- *         MemoryOpSuccess indicating that the operation was successful.
+ *         StorageOpSuccess indicating that the operation was successful.
  */
-MemoryOpStatusCode storage_set_mem(
+StorageOpStatusCode storage_set_mem(
     Storage *s,
     unsigned short base_address,
     unsigned short num_values,
@@ -80,12 +81,16 @@ MemoryOpStatusCode storage_set_mem(
  * @param s the target Storage.
  * @param program_file input stream for the binary file containing
  *        the program.
- * @return MemoryOpProgramReadIOError if there is an error when
+ * @return StorageOpProgramReadIOError if there is an error when
  *         reading from the program input stream.
- *         MemoryOpProgramTooBig if the program is too big to fit
+ *         StorageOpProgramTooBig if the program is too big to fit
  *         into memory of Storage.
- *         MemoryOpSuccess if successful.
+ *         StorageOpSuccess if successful.
  */
-MemoryOpStatusCode storage_load_program(Storage *s, FILE *program_file);
+StorageOpStatusCode storage_load_program(Storage *s, FILE *program_file);
+
+void storage_set_reg(Storage *s, unsigned short register_code, unsigned short value);
+unsigned short storage_get_reg_or_num(Storage *s, unsigned short code);
+bool is_register(unsigned short address);
 
 #endif

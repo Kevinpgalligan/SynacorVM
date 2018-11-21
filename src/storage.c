@@ -30,40 +30,55 @@ bool valid_range(unsigned short base_address, unsigned short num_values) {
         && base_address <= highest_address;
 }
 
-MemoryOpStatusCode storage_get_mem(
+StorageOpStatusCode storage_get_mem(
         Storage *storage,
         unsigned short base_address,
         unsigned short num_values,
         unsigned short *destination) {
     if (!valid_range(base_address, num_values)) {
-        return MemoryOpInvalidAddress;
+        return StorageOpInvalidAddress;
     }
     memcpy(destination, storage->memory + base_address, num_values * sizeof storage->memory[0]);
-    return MemoryOpSuccess;
+    return StorageOpSuccess;
 }
 
-MemoryOpStatusCode storage_set_mem(
+StorageOpStatusCode storage_set_mem(
         Storage *storage,
         unsigned short base_address,
         unsigned short num_values,
         unsigned short *values) {
     if (!valid_range(base_address, num_values)) {
-        return MemoryOpInvalidAddress;
+        return StorageOpInvalidAddress;
     }
     memcpy(storage->memory + base_address, values, num_values * sizeof *values);
-    return MemoryOpSuccess;
+    return StorageOpSuccess;
 }
 
-MemoryOpStatusCode storage_load_program(Storage *storage, FILE *program_file) {
+StorageOpStatusCode storage_load_program(Storage *storage, FILE *program_file) {
     fread(storage->memory, sizeof storage->memory[0], MEMORY_SIZE, program_file);
     if (ferror(program_file)) {
-        return MemoryOpProgramReadIOError;
+        return StorageOpProgramReadIOError;
     }
     if (feof(program_file)) {
-        return MemoryOpSuccess;
+        return StorageOpSuccess;
     }
     // Program must be too big to fit into memory, since
     // we haven't encountered an error or EOF after reading
     // the max possible number of values.
-    return MemoryOpProgramTooBig;
+    return StorageOpProgramTooBig;
+}
+
+bool is_register(unsigned short address) {
+    return REGISTER_OFFSET <= address && address < REGISTER_OFFSET + REGISTERS;
+}
+
+void storage_set_reg(Storage *s, unsigned short register_code, unsigned short value) {
+    s->registers[register_code - REGISTER_OFFSET] = value;
+}
+
+unsigned short storage_get_reg_or_num(Storage *s, unsigned short code) {
+    if (is_register(code)) {
+        return s->registers[code - REGISTER_OFFSET];
+    }
+    return code % MAX_NUM;
 }

@@ -7,11 +7,13 @@ TESTS_NAME = synacor-tests
 DEPENDENCIES = \
 	src/storage.c \
 	src/execution.c \
-	src/instructions.c
+	src/instructions.c \
+	src/stack.c
 
 TEST_DEPENDENCIES = \
 	tests/testrunner.c \
-	tests/test_storage.c
+	tests/test_storage.c \
+	tests/test_stack.c
 
 all: compile
 

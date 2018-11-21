@@ -16,7 +16,7 @@
         set_error(e, ExecutionAllocError);\
         return;\
     }\
-    if (storage_get_mem(s, e->address, num_cells, pointer_name) != MemoryOpSuccess) {\
+    if (storage_get_mem(s, e->address, num_cells, pointer_name) != StorageOpSuccess) {\
         set_error(e, ExecutionMemoryAccessError);\
         return;\
     }\
@@ -34,17 +34,13 @@ void do_step(Execution *e, Storage *s) {
     Instruction *instruction = lookup_instruction(*instruction_code);
     if (instruction == NULL) {
         set_error(e, ExecutionInvalidInstructionError);
+        printf("ERROR, unknown instruction code: %hu\n", *instruction_code);
         return;
     }
 
     unsigned short *args = NULL;
     if (instruction->num_args > 0) {
         LOAD_OR_ERROR(args, instruction->num_args)
-    }
-
-    if (instruction->fn(e, s, args) != InstructionSuccess) {
-        set_error(e, ExecutionInstructionError);
-        return;
     }
 
     free(args);

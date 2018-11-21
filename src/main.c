@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <stdbool.h>
 #include "storage.h"
 #include "execution.h"
 
@@ -25,7 +26,7 @@ int main(int argc, const char *argv[]) {
         printf("Could not allocate space for VM memory.");
         exit(1);
     }
-    if (storage_load_program(storage, program_file) != MemoryOpSuccess) {
+    if (storage_load_program(storage, program_file) != StorageOpSuccess) {
         printf("Failed to load program into memory.\n");
         exit(1);
     }

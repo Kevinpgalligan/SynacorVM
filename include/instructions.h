@@ -2,12 +2,7 @@
 #include "storage.h"
 #include "execution.h"
 
-typedef enum {
-    InstructionSuccess,
-    InstructionArgOutsideAsciiRange
-} InstructionStatusCode;
-
-typedef InstructionStatusCode (*InstructionFn)(Execution *e, Storage *s, unsigned short *args);
+typedef void (*InstructionFn)(Execution *e, Storage *s, unsigned short *args);
 
 typedef struct {
     unsigned short code;
