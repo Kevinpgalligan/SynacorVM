@@ -9,19 +9,27 @@ typedef enum {
     ExecutionStackError
 } ExecutionStatus;
 
+/**
+ * Used to track execution of a program.
+ */
 typedef struct {
     unsigned short address;
     bool is_running;
     ExecutionStatus status;
 } Execution;
 
+/**
+ * Set error status in the Execution and instruct it
+ * to halt.
+ */
 void set_error(Execution *e, ExecutionStatus status);
 
 /**
  * Executes program starting at address 0 in memory.
  *
- * Assumes that VM storage has been initialized, i.e. the
- * stack must first be allocated.
+ * Assumes that VM storage has been initialized. The
+ * stack must first be allocated, memory & registers must
+ * be set to 0.
  *
  * @return ExecutionSuccess if program runs to completion
  *         successfully, otherwise some error.

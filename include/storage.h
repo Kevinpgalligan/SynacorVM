@@ -34,10 +34,6 @@ StackOpStatus stack_pop(unsigned short *value);
 /**
  * Copy N values from memory starting from the provided address.
  *
- * @param base_address address at which to start the copy.
- * @param num_values number of memory cells to copy.
- * @param destination location where the copied values will be
- *        stored, should be at least num_values in size.
  * @return StorageOpInvalidAddress if the copy range is outside
  *         the range of valid memory addresses, otherwise
  *         StorageOpSuccess indicating that the copy was successful.
@@ -50,10 +46,6 @@ StorageOpStatus get_mem(
 /**
  * Set the values of N cells in memory starting from the provided address.
  *
- * @param base_address address at which to start setting values.
- * @param num_values number of memory cells to set.
- * @param destination location where the values of the cells will be
- *        retrieved from, should be at least num_values in size.
  * @return StorageOpInvalidAddress if the memory range is outside
  *         the range of valid memory addresses, otherwise
  *         StorageOpSuccess indicating that the operation was successful.
@@ -66,9 +58,6 @@ StorageOpStatus set_mem(
 /**
  * Load a program from a binary file into memory at address 0.
  *
- * @param s the target Storage.
- * @param program_file input stream for the binary file containing
- *        the program.
  * @return StorageOpProgramReadIOError if there is an error when
  *         reading from the program input stream.
  *         StorageOpProgramTooBig if the program is too big to fit
@@ -77,8 +66,26 @@ StorageOpStatus set_mem(
  */
 StorageOpStatus load_program(FILE *program_file);
 
+/**
+ * Set the value of a register.
+ */
 void set_reg(unsigned short register_code, unsigned short value);
+
+/**
+ * Get a register value or a number.
+ *
+ * Assumes that 'code' is either a valid number or a register.
+ *
+ * @return the value of 'code', if its a valid number; otherwise,
+ *         the value of the register represented by 'code'.
+ */
 unsigned short reg_or_num(unsigned short code);
+
+/**
+ * Determine whether an address is actually the code of a register.
+ *
+ * @return whether the address value represents a register.
+ */
 bool is_register(unsigned short address);
 
 #endif

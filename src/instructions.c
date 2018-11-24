@@ -81,18 +81,18 @@ void gt(Execution *execution, unsigned short *args) {
 }
 
 void jmp(Execution *execution, unsigned short *args) {
-    set_execution_address(execution, reg_or_num(args[0]));
+    set_execution_address(execution, args[0]);
 }
 
 void jt(Execution *execution, unsigned short *args) {
     if (reg_or_num(args[0]) != 0) {
-        set_execution_address(execution, reg_or_num(args[1]));
+        set_execution_address(execution, args[1]);
     }
 }
 
 void jf(Execution *execution, unsigned short *args) {
     if (reg_or_num(args[0]) == 0) {
-        set_execution_address(execution, reg_or_num(args[1]));
+        set_execution_address(execution, args[1]);
     }
 }
 
@@ -140,12 +140,12 @@ void wmem(Execution *execution, unsigned short *args) {
 
 void call(Execution *execution, unsigned short *args) {
     // Assumes that the execution address has already been
-    // updated.
+    // updated to point to next instruction.
     if (stack_push(execution->address) != StackOpSuccess) {
         set_error(execution, ExecutionStackError);
         return;
     }
-    execution->address = reg_or_num(args[0]);
+    set_execution_address(execution, args[0]);
 }
 
 void ret(Execution *execution, unsigned short *args) {
@@ -158,7 +158,7 @@ void ret(Execution *execution, unsigned short *args) {
         set_error(execution, ExecutionStackError);
         return;
     }
-    execution->address = return_address;
+    set_execution_address(execution, return_address);
 }
 
 void out(Execution *execution, unsigned short *args) {
@@ -201,6 +201,12 @@ static Instruction instructions[] = {
 static const size_t num_instructions = sizeof instructions / sizeof instructions[0];
 
 Instruction *lookup_instruction(unsigned short code) {
+    // This would be more efficient if the index of the
+    // instructions in the array matched their instruction
+    // code, we could return instructions[code] immediately.
+    // But it's less flexible that way, can't leave some
+    // instructions incomplete / can't "reserve" instruction
+    // codes.
     for (size_t i = 0; i < num_instructions; i++) {
         if (instructions[i].code == code) {
             return &instructions[i];
