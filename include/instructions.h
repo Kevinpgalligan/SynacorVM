@@ -2,6 +2,14 @@
 #include "storage.h"
 #include "execution.h"
 
+/**
+ * This header contains the definition of an instruction and
+ * the mapping from code -> instruction.
+ */
+
+/**
+ * This type of function contains the logic of an instruction.
+ */
 typedef void (*InstructionFn)(Execution *e, unsigned short *args);
 
 typedef struct {

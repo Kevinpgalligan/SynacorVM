@@ -5,8 +5,8 @@
 #include <stdbool.h>
 
 /**
- * Stack utility class. Contains only memory-related functions,
- * manipulation of the VM's stack is done through functions
+ * Stack data structure. This header contains only memory management
+ * functions, manipulation of the VM's stack is done through functions
  * in storage.h.
  */
 

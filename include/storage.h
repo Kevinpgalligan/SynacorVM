@@ -1,6 +1,14 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
+/**
+ * This header includes all of the functions for manipulating
+ * the VM's storage, including the registers, memory and stack.
+ * Registers and memory are allocated statically. The stack
+ * must be allocated at runtime through the set_stack(...)
+ * function, which may fail.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -15,21 +23,20 @@
 #define REGISTER_OFFSET  MEMORY_SIZE
 #define MAX_NUM          32768u
 
+/**
+ * Sets the globally-used stack. This must be called before
+ * any stack operations are executed.
+ */
+void set_stack(Stack *stack);
+StackOpStatus stack_push(unsigned short value);
+StackOpStatus stack_pop(unsigned short *value);
+
 typedef enum {
     StorageOpInvalidAddress,
     StorageOpProgramReadIOError,
     StorageOpProgramTooBig,
     StorageOpSuccess
 } StorageOpStatus;
-
-/**
- * Sets the globally-used stack. This must be called before
- * any stack operations are executed.
- */
-void set_stack(Stack *stack);
-
-StackOpStatus stack_push(unsigned short value);
-StackOpStatus stack_pop(unsigned short *value);
 
 /**
  * Copy N values from memory starting from the provided address.

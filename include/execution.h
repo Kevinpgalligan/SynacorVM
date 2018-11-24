@@ -1,6 +1,12 @@
 #ifndef EXECUTION_H
 #define EXECUTION_H
 
+/**
+ * Functions to execute, and track the execution of, a
+ * Synacor program that has been loaded into the memory
+ * of the VM.
+ */
+
 typedef enum {
     ExecutionSuccess,
     ExecutionInvalidInstructionError,
