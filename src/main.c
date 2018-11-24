@@ -5,10 +5,11 @@
 #include <stdbool.h>
 #include "storage.h"
 #include "execution.h"
+#include "stack.h"
 
 int main(int argc, const char *argv[]) {
+    Stack *stack;
     FILE *program_file;
-    Storage *storage;
     
     if (argc != 2) {
         printf("One (and only one) input argument required: ");
@@ -16,31 +17,33 @@ int main(int argc, const char *argv[]) {
         exit(1);
     }
 
+    stack = stack_init();
+    if (stack == NULL) {
+        printf("Could not allocate memory for VM stack.");
+        exit(1);
+    }
+    set_stack(stack);
+    
     program_file = fopen(argv[1], "rb");
     if (program_file == NULL) {
         printf("Could not open program file: %s\n", strerror(errno));
         exit(errno);
     }
-    storage = storage_init();
-    if (storage == NULL) {
-        printf("Could not allocate space for VM memory.");
-        exit(1);
-    }
-    if (storage_load_program(storage, program_file) != StorageOpSuccess) {
+    if (load_program(program_file) != StorageOpSuccess) {
         printf("Failed to load program into memory.\n");
         exit(1);
     }
     fclose(program_file);
 
-    ExecutionStatusCode status = execute(storage);
+    ExecutionStatus status = execute_program();
     printf("\n-------\n");
     if (status == ExecutionSuccess) {
         printf("Execution was successful!\n");
     } else {
-        printf("Execution was unsuccessful!\n");
+        printf("Execution was unsuccessful! Error code: %d\n", status);
     }
     
-    storage_free(storage);
+    stack_free(stack);
 
     return 0;
 }

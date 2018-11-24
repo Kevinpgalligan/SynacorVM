@@ -8,49 +8,58 @@
 // and loads num_cells from storage into
 // it. Then advances the execution pointer past
 // the cells that were loaded. If any of these
-// steps fail, it sets the Execution in an error
+// steps fail, it sets the Execution to an error
 // state and returns from the function.
-#define LOAD_OR_ERROR(pointer_name, num_cells)\
-    pointer_name = malloc(num_cells * sizeof *pointer_name);\
-    if (pointer_name == NULL) {\
-        set_error(e, ExecutionAllocError);\
+#define LOAD_OR_ERROR(address, num_cells, destination_pointer)\
+    if (get_mem(address, num_cells, destination_pointer) != StorageOpSuccess) {\
+        set_error(execution, ExecutionMemoryAccessError);\
         return;\
     }\
-    if (storage_get_mem(s, e->address, num_cells, pointer_name) != StorageOpSuccess) {\
-        set_error(e, ExecutionMemoryAccessError);\
-        return;\
-    }\
-    e->address += num_cells;
 
-void set_error(Execution *e, ExecutionStatusCode status) {
-    e->status = status;
-    e->is_running = false;
+#define MAX_INSTRUCTION_ARGS 10
+
+static unsigned short instruction_buffer[1];
+static unsigned short args_buffer[MAX_INSTRUCTION_ARGS];
+
+void set_error(Execution *execution, ExecutionStatus status) {
+    execution->status = status;
+    execution->is_running = false;
 }
 
-void do_step(Execution *e, Storage *s) {
-    unsigned short *instruction_code = NULL;
-    LOAD_OR_ERROR(instruction_code, 1)
+static void do_step(Execution *execution) {
+    LOAD_OR_ERROR(execution->address, 1u, instruction_buffer);
 
-    Instruction *instruction = lookup_instruction(*instruction_code);
+    Instruction *instruction = lookup_instruction(instruction_buffer[0]);
     if (instruction == NULL) {
-        set_error(e, ExecutionInvalidInstructionError);
-        printf("ERROR, unknown instruction code: %hu\n", *instruction_code);
+        set_error(execution, ExecutionInvalidInstructionError);
+        printf("ERROR, unknown instruction code: %hu\n", instruction_buffer[0]);
         return;
     }
 
-    unsigned short *args = NULL;
     if (instruction->num_args > 0) {
-        LOAD_OR_ERROR(args, instruction->num_args)
+        LOAD_OR_ERROR(execution->address + 1, instruction->num_args, args_buffer);
     }
+    
+    /*
+    printf("%hu %s ", execution->address, instruction->name);
+    for (size_t i = 0; i < instruction->num_args; i++) {
+        printf("%hu ", args_buffer[i]);
+    }
+    printf("\n");
+    */
 
-    free(args);
-    free(instruction_code);
+    // Advance execution address past current instruction and its args.
+    // This has to happen BEFORE the instruction is executed, otherwise
+    // we invalidate any instructions that change the execution address.
+    execution->address += 1 + instruction->num_args;
+
+    instruction->fn(execution, args_buffer);
 }
 
-ExecutionStatusCode execute(Storage *s) {
-    EXECUTION_INIT(e);
-    while (e.is_running) {
-        do_step(&e, s);
+ExecutionStatus execute_program() {
+    Execution execution = { 0, true, ExecutionSuccess };
+    while (execution.is_running) {
+        do_step(&execution);
     }
-    return e.status;
+    return execution.status;
 }

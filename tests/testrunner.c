@@ -8,8 +8,7 @@ int main(void) {
     int number_failed;
     SRunner *sr;
 
-    sr = srunner_create(storage_suite());
-    srunner_add_suite(sr, stack_suite());
+    sr = srunner_create(stack_suite());
 
     srunner_run_all(sr, CK_VERBOSE);
     number_failed = srunner_ntests_failed(sr);

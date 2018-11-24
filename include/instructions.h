@@ -2,7 +2,7 @@
 #include "storage.h"
 #include "execution.h"
 
-typedef void (*InstructionFn)(Execution *e, Storage *s, unsigned short *args);
+typedef void (*InstructionFn)(Execution *e, unsigned short *args);
 
 typedef struct {
     unsigned short code;

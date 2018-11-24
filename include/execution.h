@@ -1,27 +1,31 @@
 #ifndef EXECUTION_H
 #define EXECUTION_H
 
-#include "storage.h"
-#include <stdbool.h>
-
-// Create Execution on the stack with
-// appropriate default values.
-#define EXECUTION_INIT(name) Execution name = { 0, true, ExecutionSuccess }
-
 typedef enum {
     ExecutionSuccess,
     ExecutionInvalidInstructionError,
     ExecutionMemoryAccessError,
     ExecutionAllocError,
-    ExecutionInstructionError
-} ExecutionStatusCode;
-
-ExecutionStatusCode execute(Storage *s);
+    ExecutionStackError
+} ExecutionStatus;
 
 typedef struct {
     unsigned short address;
     bool is_running;
-    ExecutionStatusCode status;
+    ExecutionStatus status;
 } Execution;
+
+void set_error(Execution *e, ExecutionStatus status);
+
+/**
+ * Executes program starting at address 0 in memory.
+ *
+ * Assumes that VM storage has been initialized, i.e. the
+ * stack must first be allocated.
+ *
+ * @return ExecutionSuccess if program runs to completion
+ *         successfully, otherwise some error.
+ */
+ExecutionStatus execute_program();
 
 #endif

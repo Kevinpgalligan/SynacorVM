@@ -12,7 +12,6 @@ DEPENDENCIES = \
 
 TEST_DEPENDENCIES = \
 	tests/testrunner.c \
-	tests/test_storage.c \
 	tests/test_stack.c
 
 all: compile

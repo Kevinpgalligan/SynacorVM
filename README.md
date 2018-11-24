@@ -1,7 +1,10 @@
 ## Description
-My attempt at the [Synacor Challenge](https://challenge.synacor.com/), which
-provides you with a virtual machine specification and a program that the virtual
-machine should be able to execute. The program is encoded as a binary blob.
+My attempt at the [Synacor Challenge](https://challenge.synacor.com/). You are given
+a virtual machine specification and a binary-encoded program. Your goal is to develop
+the specified virtual machine so that it can execute said program.
+
+The virtual machine is complete. I haven't bothered to complete the rest of the
+challenge.
 
 ## Setup
 #### Building

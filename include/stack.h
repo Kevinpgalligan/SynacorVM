@@ -2,12 +2,18 @@
 #define STACK_H
 
 #include <stdlib.h>
+#include <stdbool.h>
+
+/**
+ * Stack utility class. Contains only memory-related functions,
+ * manipulation of the VM's stack is done through storage.h.
+ */
 
 typedef enum {
     StackOpSuccess,
     StackOverflowError,
-    StackNoElementsError
-} StackOpStatusCode;
+    StackEmpty
+} StackOpStatus;
 
 typedef struct {
     size_t num_elements;
@@ -17,7 +23,5 @@ typedef struct {
 
 Stack *stack_init();
 void stack_free(Stack *stack);
-StackOpStatusCode stack_push(Stack *stack, unsigned short value);
-StackOpStatusCode stack_pop(Stack *stack, unsigned short *value);
 
 #endif

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stack.h>
 
 // These values are fixed according to the spec of
 // the Synacor VM. The address space is 2^15, and
@@ -12,37 +13,27 @@
 #define MEMORY_SIZE      32768
 #define REGISTERS        8
 #define REGISTER_OFFSET  MEMORY_SIZE
-#define MAX_NUM          MEMORY_SIZE
+#define MAX_NUM          32768u
 
 typedef enum {
     StorageOpInvalidAddress,
     StorageOpProgramReadIOError,
     StorageOpProgramTooBig,
     StorageOpSuccess
-} StorageOpStatusCode;
+} StorageOpStatus;
 
 /**
- * Represents all storage of the VM, including memory,
- * registers and the stack.
+ * Sets the globally-used stack. This must be called before
+ * any stack operations are executed.
  */
-typedef struct {
-    unsigned short memory[MEMORY_SIZE];
-    unsigned short registers[REGISTERS];
-} Storage;
+void set_stack(Stack *stack);
 
-/**
- * Allocate memory for and initialize a Storage struct.
- *
- * @return NULL if failed to allocate memory, otherwise pointer to Storage.
- */
-Storage *storage_init();
-
-void storage_free(Storage *s);
+StackOpStatus stack_push(unsigned short value);
+StackOpStatus stack_pop(unsigned short *value);
 
 /**
  * Copy N values from memory starting from the provided address.
  *
- * @param s the target storage.
  * @param base_address address at which to start the copy.
  * @param num_values number of memory cells to copy.
  * @param destination location where the copied values will be
@@ -51,8 +42,7 @@ void storage_free(Storage *s);
  *         the range of valid memory addresses, otherwise
  *         StorageOpSuccess indicating that the copy was successful.
  */
-StorageOpStatusCode storage_get_mem(
-    Storage *s,
+StorageOpStatus get_mem(
     unsigned short base_address,
     unsigned short num_values,
     unsigned short *destination);
@@ -60,7 +50,6 @@ StorageOpStatusCode storage_get_mem(
 /**
  * Set the values of N cells in memory starting from the provided address.
  *
- * @param s the target storage.
  * @param base_address address at which to start setting values.
  * @param num_values number of memory cells to set.
  * @param destination location where the values of the cells will be
@@ -69,8 +58,7 @@ StorageOpStatusCode storage_get_mem(
  *         the range of valid memory addresses, otherwise
  *         StorageOpSuccess indicating that the operation was successful.
  */
-StorageOpStatusCode storage_set_mem(
-    Storage *s,
+StorageOpStatus set_mem(
     unsigned short base_address,
     unsigned short num_values,
     unsigned short *values);
@@ -87,10 +75,10 @@ StorageOpStatusCode storage_set_mem(
  *         into memory of Storage.
  *         StorageOpSuccess if successful.
  */
-StorageOpStatusCode storage_load_program(Storage *s, FILE *program_file);
+StorageOpStatus load_program(FILE *program_file);
 
-void storage_set_reg(Storage *s, unsigned short register_code, unsigned short value);
-unsigned short storage_get_reg_or_num(Storage *s, unsigned short code);
+void set_reg(unsigned short register_code, unsigned short value);
+unsigned short reg_or_num(unsigned short code);
 bool is_register(unsigned short address);
 
 #endif
