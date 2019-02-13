@@ -1,11 +1,14 @@
-#include <stdlib.h>
-#include "storage.h"
-#include "execution.h"
+#ifndef INSTRUCTIONS_H
+#define INSTRUCTIONS_H
 
 /**
  * This header contains the definition of an instruction and
  * the mapping from code -> instruction.
  */
+
+#include <stdlib.h>
+#include "storage.h"
+#include "execution.h"
 
 /**
  * This type of function contains the logic of an instruction.
@@ -24,3 +27,5 @@ typedef struct {
  * code, if it exists. Otherwise, returns NULL.
  */
 Instruction *lookup_instruction(unsigned short code);
+
+#endif

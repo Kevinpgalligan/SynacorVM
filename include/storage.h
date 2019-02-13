@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <stack.h>
+#include "stack.h"
 
 // These values are fixed according to the spec of
 // the Synacor VM. The address space is 2^15, and
