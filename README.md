@@ -2,7 +2,7 @@
 An implementation of the [Synacor virtual machine](https://challenge.synacor.com/). Comes with a basic assembler (`assembler.py`), which features syntax sugar such as string printing, comments and memory labels. Here's an extract from an example 50-line FizzBuzz program (viewable in `examples/fizzbuzz.syn`).
 
 ```assembly
-### Main
+;;; Main
 set r1 1
 loop-start: mod r2 r1 3
 eq r2 r2 0

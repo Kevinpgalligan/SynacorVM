@@ -1,4 +1,4 @@
-### Main
+;;; Main
 set r1 1
 loop-start: mod r2 r1 3
 eq r2 r2 0
@@ -25,33 +25,33 @@ jt r2 loop-start
 halt
 
 
-### Prints the number in register r1. r1 is
-### guaranteed to have its contents preserved,
-### other registers are not.
+;;; Prints the number in register r1. r1 is
+;;; guaranteed to have its contents preserved,
+;;; other registers are not.
 print-number-in-r1: set r2 r1
 set r4 0
-# special case for n=0, just print it and quit
+; special case for n=0, just print it and quit
 eq r3 r2 0
 jf r3 collect-digits
 out "0"
 jmp print-number-finish
 collect-digits: mod r3 r2 10
-add r3 r3 48 # convert to ASCII code for decimal digits
-# have to push digits on the stack first, otherwise
-# the number will be printed in reverse.
+add r3 r3 48 ; convert to ASCII code for decimal digits
+; have to push digits on the stack first, otherwise
+; the number will be printed in reverse.
 push r3 
-add r4 r4 1 # keep track of digits on the stack
+add r4 r4 1 ; keep track of digits on the stack
 div r2 r2 10
 eq r3 r2 0
 jf r3 collect-digits
 print-nonzero: pop r3
 out r3
-add r4 r4 32767 # equivalent of subtracting 1
+add r4 r4 32767 ; equivalent of subtracting 1
 eq r3 r4 0
 jf r3 print-nonzero
 print-number-finish: ret
 
 
-### Prints ASCII line feed code, only works on Linux.
+;;; Prints ASCII line feed code, only works on Linux.
 print-new-line: out 10
 ret

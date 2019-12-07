@@ -13,6 +13,8 @@ INSTRUCTIONS = ["halt", "set", "push", "pop", "eq", "gt", "jmp",
     "wmem", "call", "ret", "out", "in", "noop", "div"]
 INSTRUCTION_TO_CODE = {instruction: code for code, instruction in enumerate(INSTRUCTIONS)}
 
+COMMENT_CHARACTER = ";"
+
 LABEL_PLACEHOLDER = 9999
 
 REGISTER_OFFSET = 32768
@@ -30,7 +32,7 @@ def main():
     lines = open(args.f, "r").readlines()
     with open(args.out if args.out else args.f.replace(".syn", ".bin"), "wb") as out_file:
         for line in lines:
-            comment_hash_index = line.find("#")
+            comment_hash_index = line.find(COMMENT_CHARACTER)
             if comment_hash_index != -1:
                 line = line[:comment_hash_index]
             line = line.strip()
