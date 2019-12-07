@@ -1,0 +1,57 @@
+### Main
+set r1 1
+loop-start: mod r2 r1 3
+eq r2 r2 0
+mod r3 r1 5
+eq r3 r3 0
+and r4 r2 r3
+jf r4 not-multiple-of-both
+out "FizzBuzz "
+call print-new-line
+jmp increment
+not-multiple-of-both: jf r2 not-multiple-of-3
+out "Fizz"
+call print-new-line
+jmp increment
+not-multiple-of-3: jf r3 not-multiple-of-5
+out "Buzz"
+call print-new-line
+jmp increment
+not-multiple-of-5: call print-number-in-r1
+call print-new-line
+increment: add r1 r1 1
+gt r2 101 r1
+jt r2 loop-start
+halt
+
+
+### Prints the number in register r1. r1 is
+### guaranteed to have its contents preserved,
+### other registers are not.
+print-number-in-r1: set r2 r1
+set r4 0
+# special case for n=0, just print it and quit
+eq r3 r2 0
+jf r3 collect-digits
+out "0"
+jmp print-number-finish
+collect-digits: mod r3 r2 10
+add r3 r3 48 # convert to ASCII code for decimal digits
+# have to push digits on the stack first, otherwise
+# the number will be printed in reverse.
+push r3 
+add r4 r4 1 # keep track of digits on the stack
+div r2 r2 10
+eq r3 r2 0
+jf r3 collect-digits
+print-nonzero: pop r3
+out r3
+add r4 r4 32767 # equivalent of subtracting 1
+eq r3 r4 0
+jf r3 print-nonzero
+print-number-finish: ret
+
+
+### Prints ASCII line feed code, only works on Linux.
+print-new-line: out 10
+ret

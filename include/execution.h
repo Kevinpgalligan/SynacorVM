@@ -12,7 +12,8 @@ typedef enum {
     ExecutionInvalidInstructionError,
     ExecutionMemoryAccessError,
     ExecutionAllocError,
-    ExecutionStackError
+    ExecutionStackError,
+    ExecutionDivisionByZeroError
 } ExecutionStatus;
 
 /**

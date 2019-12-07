@@ -173,6 +173,15 @@ void noop(Execution *execution, unsigned short *args) {
     // Do nothing.
 }
 
+void divi(Execution *execution, unsigned short *args) {
+    unsigned short divisor = reg_or_num(args[2]);
+    if (divisor == 0) {
+        set_error(execution, ExecutionDivisionByZeroError);
+    } else {
+        set_reg(args[0], BINARY_OP(args[1], /, args[2]));
+    }
+}
+
 static Instruction instructions[] = {
     {  0, "halt", &halt, 0 },
     {  1,  "set",  &set, 2 },
@@ -195,7 +204,10 @@ static Instruction instructions[] = {
     { 18,  "ret",  &ret, 0 },
     { 19,  "out",  &out, 1 },
     { 20,   "in",   &in, 1 },
-    { 21, "noop", &noop, 0 }
+    { 21, "noop", &noop, 0 },
+    // Extra instruction not defined in the spec, carries
+    // out integer division with same argument types as 'mult'.
+    { 22,  "div", &divi, 3 }
 };
 
 static const size_t num_instructions = sizeof instructions / sizeof instructions[0];
