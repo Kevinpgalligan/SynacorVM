@@ -1,5 +1,5 @@
 ## Description
-An implementation of the [Synacor virtual machine](https://challenge.synacor.com/). Comes with a basic assembler (`assembler.py`), which features syntax sugar such as string printing, comments and memory labels. Here's an extract from an example 50-line FizzBuzz program (viewable in `examples/fizzbuzz.syn`).
+An implementation of the [Synacor virtual machine](https://challenge.synacor.com/). Comes with a basic assembler (`assembler.py`), which features sugar such as string printing, comments and memory labels. Here's an extract from an example 50-line FizzBuzz program (available in `examples/fizzbuzz.syn`).
 
 ```assembly
 ;;; Main
