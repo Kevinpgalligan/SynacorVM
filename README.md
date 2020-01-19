@@ -15,8 +15,8 @@ jf r4 not-multiple-of-both
 ## Setup
 #### Building
 ```
-git clone https://github.com/Kevinpgalligan/SynacorInC.git
-cd ./SynacorInC
+git clone https://github.com/Kevinpgalligan/SynacorVM.git
+cd ./SynacorVM
 make
 ```
 
